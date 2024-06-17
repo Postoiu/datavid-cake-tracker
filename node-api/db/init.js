@@ -37,7 +37,7 @@ mongoose.connect(mongodbUri)
 
 async function main() {
     try {
-        const users = await User.findOne();
+        const users = await Users.findOne();
 
         if(!users) {
             await Users.insertMany(initUserData);
