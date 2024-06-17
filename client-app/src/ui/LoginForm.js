@@ -28,7 +28,7 @@ function LoginForm() {
       return;
     }
     
-    setCookie('access-token', data);
+    setCookie('access-token', data, { maxAge: 3600 });
   }
 
   return (

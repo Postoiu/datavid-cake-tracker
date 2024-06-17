@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Users = require('../models/Users');
+const User = require('../models/User');
 
 const mongodbUri = 'mongodb://127.0.0.1:27017/datavid';
 
@@ -37,10 +37,10 @@ mongoose.connect(mongodbUri)
 
 async function main() {
     try {
-        const users = await Users.findOne();
+        const user = await User.findOne();
 
-        if(!users) {
-            await Users.insertMany(initUserData);
+        if(!user) {
+            await User.insertMany(initUserData);
         }
     } catch (err) {
         console.log('Something went wrong! \n' + err);
