@@ -17,10 +17,11 @@ router.get('/users', verifyToken, async (req, res) => {
 router.post('/createUser', verifyToken, async (req, res) => {
   // get data from user form
   let { firstName, lastName, birthDate, country, city } = req.body;
+  console.log(birthDate);
   birthDate = new Date(birthDate);
 
   // validate it and create new entry in database
-  const newUser = new User(firstName, lastName, birthDate, country, city);
+  const newUser = new User({ firstName, lastName, birthDate, country, city });
 
   try{
     await newUser.save();
@@ -30,14 +31,21 @@ router.post('/createUser', verifyToken, async (req, res) => {
   }
   
 
-  res.send('User created successfully');
+  res.json(newUser);
 });
 
-router.post('/deleteUser/:id', verifyToken, async (req, res) => {
-  res.send('This is the delete user ' + req.params.id + ' route')
+router.get('/deleteUser/:id', verifyToken, async (req, res) => {
+  try {
+    const response = await User.deleteOne({ _id: req.params.id });
+
+    res.json(response);
+  } catch(err) {
+    console.log(err);
+    res.sendStatus(500);
+  }
 })
 
-router.post('/updateUser', verifyToken, (req, res) => {
+router.post('/updateUser/:id', verifyToken, (req, res) => {
   // get data from user form and update user in database
   res.send('This is the update user route')
 })

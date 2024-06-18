@@ -2,7 +2,7 @@ import { Form } from 'react-bootstrap';
 import { useCookies } from 'react-cookie';
 import { useState } from 'react';
 
-function NewUserForm() {
+function NewUserForm({ handleClose, updateDashboard }) {
     const [firstName, setFirstname] = useState('');
     const [lastName, setLastName] = useState('');
     const [birthDate, setBirthDate] = useState('');
@@ -20,13 +20,18 @@ function NewUserForm() {
             city
         };
 
-        await fetch('http://127.0.0.1:5000/createUser', {
+        const res = await fetch('http://127.0.0.1:5000/createUser', {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${cookies['access-token'].token}`
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${cookies['access-token'].token}`
             },
             body: JSON.stringify(formData)
         });
+        const data = await res.json();
+
+        updateDashboard(data);
+        handleClose();
     }
 
   return (
