@@ -1,0 +1,16 @@
+services:
+  mongodb-server:
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+  node-api:
+    build: ./node-api
+    restart: on-failure
+    ports:
+      - 5000:5000
+  client-app:
+    build: ./client-app
+    restart: on-failure
+    ports:
+      - 3000:3000
