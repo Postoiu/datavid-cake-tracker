@@ -1,29 +1,51 @@
 const express = require('express');
 const router = express.Router();
 
-const Users = require('../models/Users');
+const User = require('../models/User');
+const verifyToken = require('../middleware/verifyToken');
 
-router.get('/', (req, res, next) => {
+router.get('/', (req, res) => {
   res.send('Welcome to Node-API!');
 });
 
-router.get('/users', async (req, res, next) => {
-  const users = await Users.find();
+router.get('/users', verifyToken, async (req, res) => {
+  const users = await User.find();
 
-  res.send('This is the read all users route');
+  res.send(users);
 });
 
-router.post('/createUser', async (req, res, next) => {
+router.post('/createUser', verifyToken, async (req, res) => {
   // get data from user form
+  let { firstName, lastName, birthDate, country, city } = req.body;
+  console.log(birthDate);
+  birthDate = new Date(birthDate);
+
   // validate it and create new entry in database
-  res.send('This is the create user route');
+  const newUser = new User({ firstName, lastName, birthDate, country, city });
+
+  try{
+    await newUser.save();
+  } catch(err) {
+    console.log('Something went wrong! \n' + err);
+    res.sendStatus(500);
+  }
+  
+
+  res.json(newUser);
 });
 
-router.post('/deleteUser/:id', async (req, res, next) => {
-  res.send('This is the delete user ' + req.params.id + ' route')
+router.get('/deleteUser/:id', verifyToken, async (req, res) => {
+  try {
+    const response = await User.deleteOne({ _id: req.params.id });
+
+    res.json(response);
+  } catch(err) {
+    console.log(err);
+    res.sendStatus(500);
+  }
 })
 
-router.post('/updateUser', (req, res, next) => {
+router.post('/updateUser/:id', verifyToken, (req, res) => {
   // get data from user form and update user in database
   res.send('This is the update user route')
 })
