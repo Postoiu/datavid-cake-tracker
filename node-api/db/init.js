@@ -1,7 +1,10 @@
 const mongoose = require('mongoose');
-const User = require('../models/User');
+const bcrypt = require('bcrypt');
 
-const mongodbUri = 'mongodb://127.0.0.1:27017/datavid';
+const User = require('../models/User');
+const Admin = require('../models/Admin');
+
+const mongodbUri = 'mongodb://mongodb-server/datavid';
 
 const initUserData = [
     {
@@ -42,6 +45,16 @@ async function main() {
         if(!user) {
             await User.insertMany(initUserData);
         }
+
+        const admin = await Admin.findOne();
+
+        if(!admin) {
+            const hashedPassword = await bcrypt.hash('admin123', 10);
+            const newAdmin = new Admin({username: 'admin', password: hashedPassword});
+
+            await newAdmin.save();
+        }
+
     } catch (err) {
         console.log('Something went wrong! \n' + err);
     }
